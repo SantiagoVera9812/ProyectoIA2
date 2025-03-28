@@ -118,11 +118,12 @@ std::vector<std::string> consegirPalabrasAcciones(){
                 std::string input;
                 std::getline(std::cin, input);
 
-                palabrasAcciones.push_back(input);
-
-                if(input == "buscar_soluciones"){
+                if(input == "aceptar_acciones"){
                     escribiendoAcciones = false;
                 }
+
+                palabrasAcciones.push_back(input);
+
             }
 
             return palabrasAcciones;

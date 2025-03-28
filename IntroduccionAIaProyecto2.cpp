@@ -25,12 +25,12 @@ int main() {
         }},
 
         //Cuando se tengan todas las clausulas intentar encontrar una solucion
-        {"buscar_solucion", [&]() {
+        {"aceptar_clausulas", [&]() {
 
             std::cout << "Buscando solucion..." << std::endl;
             running = false;
 
-            std::cout << "Escribe las acciones que representan un accionar, escribe buscar_solucion para terminar" << std::endl;
+            std::cout << "Escribe las acciones que representan un accionar, escribe aceptar_acciones para terminar" << std::endl;
 
             bool escribiendoAcciones = true;
 
@@ -69,7 +69,7 @@ int main() {
 
     while (running) {
 
-        std::cout << "Escribe las cláusulas que realizará el programa: ";
+        std::cout << "Escribe las cláusulas que realizará el programa, si haces algo que no sea escribir una clausula puedes: escribe listar_clausulas para listar las clausulas, aceptar_clausulas para seguir al siguiente paso y salir para salir del programa" << std::endl;
         std::getline(std::cin, input);
 
         auto it = acciones.find(input);
