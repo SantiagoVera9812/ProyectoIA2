@@ -4,6 +4,8 @@
 #include "maquinaDeInferencia.h"
 #include "ProposicionesConConectores.h"
 
+bool sonComplementarias(const Relacion& a, const Relacion& b);
+
 /* void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProcesadas, Relacion* teorema) {
     std::cout << "Iniciando maquina de inferencia con el teorema:" << std::endl;
     
@@ -81,7 +83,7 @@
 }
 */
 
-void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProcesadas, Relacion* teorema) {
+/*  void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProcesadas, Relacion* teorema) {
     std::cout << "Iniciando maquina de inferencia con el teorema:\n";
     
     // Crear la primera proposición con el teorema
@@ -109,6 +111,7 @@ void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProces
         for (size_t i = 0; i < estadoActual.size(); ++i) {
             ProposicionesConConectores& proposicion = estadoActual[i];
             const std::vector<Relacion>& relaciones = proposicion.getRelaciones();
+            bool siEliminar = false;
             
             // Revisamos todas las relaciones dentro de proposicionActual en lugar de teorema
             for (size_t k = 0; k < proposicionActual.getRelaciones().size(); ++k) {
@@ -126,6 +129,8 @@ void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProces
                         std::cout << "\n🔍 Relación encontrada que cancela una en la proposición actual:\n";
                         relacion.mostrar();
 
+                        
+
                         // Crear un nuevo estado sin la relación eliminada
                         std::vector<ProposicionesConConectores> nuevoEstado = estadoActual;
                         std::cout << "\n🔍 Relación a eliminar\n";
@@ -134,22 +139,17 @@ void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProces
                          // También eliminamos la relación en proposicionActual
                         Relacion nuevaProposicion = relProposicionActual;
 
-                        std::cout << "\n🔍 Proposicion actual\n" << std::endl;
-                        proposicionActual.mostrar();
+                        std::cout<< "proposicion actual" << std::endl;
 
-                        std::cout << "\n🔍 relacion actual\n" << std::endl;
-                        relProposicionActual.mostrar();
-
-                        std::cout << "\n🔍 Proposicion actual despues de eliminacion\n" << std::endl;
-                        proposicionActual.mostrar();
-
-                        proposicionActual.eliminarRelacion(j);
                         proposicionActual.eliminarRelacion(k);
+
+                        std::cout << "\n🔍 proposicion mas grande\n" << std::endl;
+                        proposicion.getRelaciones()[k].mostrar();
+                        proposicion.eliminarRelacion(k);
 
                         nuevoEstado[i] = proposicionActual;
 
-                            
-                        
+                    
                         // 📌 Mostrar el estado después de eliminar
                         std::cout << "\n🛠️ Estado después de eliminar la relación:\n";
                         for (const auto& prop : nuevoEstado) {
@@ -170,8 +170,13 @@ void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProces
 
                         
                         // Push al stack con el nuevo estado y nueva proposición
-                        estados.push({nuevoEstado, proposicionActual});
+                        estados.push({nuevoEstado, proposicion});
                     }
+
+                
+                    std::cout<<"Proporcion fuera del if" << std::endl;
+                    proposicion.getRelaciones()[k].mostrar(); 
+                    
                 }
             }
         }
@@ -179,6 +184,103 @@ void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProces
 
     std::cout << "❌ No se pudo demostrar el teorema con las cláusulas dadas.\n";
 }
+*/
 
+void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProcesadas, Relacion* teorema) {
+    // ... inicialización previa igual ...
+
+     // Crear la primera proposición con el teorema
+     ProposicionesConConectores nuevaProposicionConConectores;
+     nuevaProposicionConConectores.agregarRelacion(teorema);
+ 
+     std::cout << "🔹 Teorema inicial convertido en proposición:\n";
+     nuevaProposicionConConectores.mostrar();
+ 
+     // Pila para el backtracking (ahora maneja pares: {estado, proposición actual})
+     std::stack<std::pair<std::vector<ProposicionesConConectores>, ProposicionesConConectores>> estados;
+     estados.push({clausulasProcesadas, nuevaProposicionConConectores});
+
+    while (!estados.empty()) {
+        auto [estadoActual, proposicionActual] = estados.top();
+        estados.pop();
+
+        // Mostrar estado actual
+        std::cout << "\n📢 Estado Actual:\n";
+        for (const auto& prop : estadoActual) prop.mostrar();
+        std::cout << "🔍 Proposición Actual:\n";
+        proposicionActual.mostrar();
+
+        // Verificar si ya está demostrado
+        if (estadoActual.empty()) {
+            std::cout << "✅ El teorema ha sido demostrado!\n";
+            return;
+        }
+
+        bool cambioRealizado = false;
+
+        // Buscar complementarios en todas las cláusulas
+        for (size_t i = 0; i < estadoActual.size(); ++i) {
+            auto& clausula = estadoActual[i];
+            auto& relacionesClausula = clausula.getRelaciones();
+
+            for (size_t j = 0; j < relacionesClausula.size(); ++j) {
+                auto& relClausula = relacionesClausula[j];
+
+                // Buscar en la proposición actual
+                for (size_t k = 0; k < proposicionActual.getRelaciones().size(); ++k) {
+                    auto& relActual = proposicionActual.getRelaciones()[k];
+
+                    if (sonComplementarias(relClausula, relActual)) {
+                        std::cout << "\n⚡ Encontradas relaciones complementarias:\n";
+                        relClausula.mostrar();
+                        relActual.mostrar();
+
+                        // Crear nuevo estado
+                        auto nuevoEstado = estadoActual;
+                        auto nuevaProposicion = proposicionActual;
+
+                        // Eliminar la relación de la cláusula
+                        nuevoEstado[i].eliminarRelacion(j);
+
+                        // Eliminar la relación de la proposición
+                        nuevaProposicion.eliminarRelacion(k);
+
+                        // Si la cláusula quedó vacía, eliminarla
+                        if (nuevoEstado[i].getRelaciones().empty()) {
+                            nuevoEstado.erase(nuevoEstado.begin() + i);
+                        }
+
+                        // Si la proposición quedó vacía, verificar si hay más cláusulas
+                        if (nuevaProposicion.getRelaciones().empty()) {
+                            if (nuevoEstado.empty()) {
+                                std::cout << "✅ El teorema ha sido demostrado!\n";
+                                return;
+                            }
+                            // Tomar la primera cláusula como nueva proposición
+                            nuevaProposicion = nuevoEstado[0];
+                            nuevoEstado.erase(nuevoEstado.begin());
+                        }
+
+                        estados.push({nuevoEstado, nuevaProposicion});
+                        cambioRealizado = true;
+                        break;
+                    }
+                }
+                if (cambioRealizado) break;
+            }
+            if (cambioRealizado) break;
+        }
+
+    }
+
+    std::cout << "❌ No se pudo demostrar el teorema.\n";
+}
+
+bool sonComplementarias(const Relacion& a, const Relacion& b) {
+    return a.getNombreFuncion() == b.getNombreFuncion() &&
+           a.getAfectado() == b.getAfectado() &&
+           a.getAfectante() == b.getAfectante() &&
+           a.getEsNegacion() != b.getEsNegacion();
+}
 
 
