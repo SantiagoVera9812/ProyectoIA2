@@ -6,6 +6,8 @@
 #include "manejoDeClausulas.h"
 #include "ProposicionesConConectores.h"
 #include "manejoDeClausulas.h"
+#include "maquinaDeInferencia.h"
+
 
 
 int main() {
@@ -54,6 +56,10 @@ int main() {
             Relacion* teorema = conseguirTeorema(palabrasAcciones).toggleNegacion();
 
             teorema->mostrar();
+
+            maquinaDeInferencia(clausulasProcesadas, teorema);
+
+
 
 
                 }},

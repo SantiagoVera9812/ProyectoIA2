@@ -26,6 +26,13 @@ public:
 
     Relacion* toggleNegacion();
 
+    std::string getTipoRelacion() const;
+    std::string getNombreFuncion() const;
+    std::string getAfectado() const;
+    std::string getAfectante() const;
+    bool getTieneAfectante() const;
+    bool getEsNegacion() const;
+
     void mostrar() const{
         std::cout << "Relacion -> Tipo: " << tipo_relacion
             << ", Funcion: " << nombreFuncion

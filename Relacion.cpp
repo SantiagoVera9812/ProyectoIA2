@@ -30,3 +30,27 @@ Relacion* Relacion::toggleNegacion(){
 
 }
 
+std::string Relacion::getTipoRelacion() const{
+    return tipo_relacion;
+}
+
+std::string Relacion::getNombreFuncion() const{
+    return nombreFuncion;
+}
+
+std::string Relacion::getAfectado() const{
+    return afectado;
+}
+
+std::string Relacion::getAfectante() const{
+    return afectante;
+}
+
+bool Relacion::getTieneAfectante() const{
+    return tieneAfectante;
+}
+
+bool Relacion::getEsNegacion() const{
+    return esNegacion;
+}
+
