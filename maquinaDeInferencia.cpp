@@ -187,7 +187,6 @@ bool sonComplementarias(const Relacion& a, const Relacion& b);
 */
 
 void maquinaDeInferencia(std::vector<ProposicionesConConectores> clausulasProcesadas, Relacion* teorema) {
-    // ... inicialización previa igual ...
 
      // Crear la primera proposición con el teorema
      ProposicionesConConectores nuevaProposicionConConectores;
