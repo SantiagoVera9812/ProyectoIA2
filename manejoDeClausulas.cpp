@@ -81,7 +81,7 @@ std::vector<ProposicionesConConectores> procesarConectoresLogicos(std::vector<st
                     }
                     bufferProposicion.clear(); // Resetear el buffer
                 }
-                conectorActual = "o"; // Asignamos "o" como conector
+                conectorActual = clausula[i]; // Asignamos "o" como conector
             } else {
                 bufferProposicion.push_back(clausula[i]);
             }

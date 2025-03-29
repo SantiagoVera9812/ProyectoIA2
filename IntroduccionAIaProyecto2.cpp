@@ -7,6 +7,7 @@
 #include "ProposicionesConConectores.h"
 #include "manejoDeClausulas.h"
 #include "maquinaDeInferencia.h"
+#include "procesarConector.h"
 
 
 
@@ -46,7 +47,7 @@ int main() {
 
             listarClausulas(clausulas);
 
-            std::vector<ProposicionesConConectores> clausulasProcesadas = procesarConectoresLogicos(clausulas, palabrasAcciones);
+            std::vector<ProposicionesConConectores> clausulasProcesadas = procesarCondicionalesLogicos(clausulas, palabrasAcciones);
 
             for (const auto& proposicion : clausulasProcesadas) {
                 std::cout << "en main vemos la proposicion:" << std::endl;
