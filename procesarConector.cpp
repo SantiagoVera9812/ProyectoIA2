@@ -8,6 +8,7 @@ std::vector<std::string> negarLiteral(std::vector<std::string> literal);
 std::vector<std::string> negarClausula(std::vector<std::string> clausulaANegar, std::vector<std::string> palabrasAcciones);
 std::vector<ProposicionesConConectores> procesarConectoresLogicosNormalizados(std::vector<std::vector<std::string>> clausulas, std::vector<std::string> palabrasAcciones);
 ProposicionesConConectores procesarConectorLogico0(std::vector<std::string> clausula, std::vector<std::string> palabrasAcciones);
+std::vector<std::vector<std::string>> procesarConectorLogicoY(std::vector<std::string> clausula);
 
 std::vector<ProposicionesConConectores> procesarCondicionalesLogicos(std::vector<std::vector<std::string>> clausulas, std::vector<std::string> palabrasAcciones) {
     std::vector<ProposicionesConConectores> proposiciones;
@@ -68,11 +69,16 @@ std::vector<ProposicionesConConectores> procesarCondicionalesLogicos(std::vector
                     std::cout << palabra << std::endl;
                 }
 
-                ProposicionesConConectores proposicionSiEntonces = procesarConectorLogico0(relacionSiNegada, palabrasAcciones);
-                proposicionSiEntonces.mostrar();
+                std::vector<std::vector<std::string>>vectorClausulaY = procesarConectorLogicoY(relacionSiNegada);
 
-                proposiciones.emplace_back(proposicionSiEntonces);
-                
+                for(const auto& nuevaClausula: vectorClausulaY){
+                   
+                    ProposicionesConConectores proposicionSiEntonces = procesarConectorLogico0(nuevaClausula, palabrasAcciones);
+                    proposicionSiEntonces.mostrar();
+
+                    proposiciones.emplace_back(proposicionSiEntonces);
+                }
+
                 
             } catch (const std::exception& e) {
                 std::cerr << "Error: " << e.what() << std::endl;
@@ -84,11 +90,17 @@ std::vector<ProposicionesConConectores> procesarCondicionalesLogicos(std::vector
         if (bufferSi.empty() && bufferEntonces.empty()) {
             try {
 
-                std::cout << "En buffers vacios " << std::endl;
+                std::vector<std::vector<std::string>>vectorClausulaY = procesarConectorLogicoY(clausula);
 
-                ProposicionesConConectores clausulasProcesada =  procesarConectorLogico0(clausula, palabrasAcciones);
+                for(const auto& nuevaClausula: vectorClausulaY){
 
-                proposiciones.emplace_back(clausulasProcesada);
+
+                   
+                    ProposicionesConConectores proposicionSiEntonces = procesarConectorLogico0(nuevaClausula, palabrasAcciones);
+                    proposicionSiEntonces.mostrar();
+
+                    proposiciones.emplace_back(proposicionSiEntonces);
+                }
                 
             } catch (const std::exception& e) {
                 std::cerr << "Error: " << e.what() << std::endl;
@@ -209,3 +221,38 @@ ProposicionesConConectores procesarConectorLogico0(std::vector<std::string> clau
     
     
 }
+
+
+std::vector<std::vector<std::string>> procesarConectorLogicoY(
+    std::vector<std::string> clausula){
+
+        std::vector<std::vector<std::string>> resultado;
+        std::vector<std::string> buffer;
+
+        for(const auto& palabra: clausula){
+            if(palabra == "y"){
+
+                if(!buffer.empty()){
+                    resultado.push_back(buffer);
+                    buffer.clear();
+                }
+            } else {
+                buffer.push_back(palabra);
+            }
+        } 
+
+        if(!buffer.empty()){
+            resultado.push_back(buffer);
+        }
+
+        if(resultado.empty() && !clausula.empty()){
+            resultado.push_back(clausula);
+        }
+
+        return resultado;
+    }
+
+
+
+
+
